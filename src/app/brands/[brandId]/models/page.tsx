@@ -9,7 +9,7 @@ export default function BrandModelsPage() {
     const { brandId } = useParams();
     const [search, setSearch] = useState('');
     const [typeFilter, setTypeFilter] = useState('');
-    const [sortBy, setSortBy] = useState({ field: 'name', order: 'ASC' }); // Default sorting
+    const [sortBy, setSortBy] = useState({ field: 'name', order: 'ASC' }); 
 
     const router = useRouter();
 
@@ -21,13 +21,10 @@ export default function BrandModelsPage() {
     if (error) return <p className="text-center mt-4 text-red-500">Error: {error.message}</p>;
 
     const models = data?.findBrandModels || [];
-    
-    // Debug: log the actual type values
-    console.log('Model types:', models.map((model: any) => model.type));
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        // Search is now handled client-side
+        
     };
 
     const filteredModels = models.filter((model: any) =>

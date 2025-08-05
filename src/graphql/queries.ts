@@ -31,3 +31,29 @@ export const FIND_BRAND_MODELS= gql`
         }
     }
 `;
+export const FIND_UNIQUE_MODEL = gql`
+    query FindUniqueModel($brandId: ID!, $modelId: ID!) {
+        findUniqueModel(brandId: $brandId, modelId: $modelId) {
+            id
+            name
+            type
+            image
+            description
+            price
+            specs {
+                bodyWood
+                neckWood
+                fingerboardWood
+                pickups
+                tuners
+                scaleLength
+                bridge
+            }
+            musicians {
+                name
+                musicianImage
+                bands
+            }
+        }
+    }
+`;
