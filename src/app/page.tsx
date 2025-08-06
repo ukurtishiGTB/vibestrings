@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@apollo/client";
 import { GET_ALL_BRANDS } from "@/graphql/queries";
+import Footer from "@/components/footer";
 
 export default function HomePage() {
   const { data, loading, error } = useQuery(GET_ALL_BRANDS);
@@ -16,10 +17,10 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="relative">
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
-            <div className="min-h-screen px-8 pt-8 flex flex-col">
+            <div className="min-h-screen pt-8 flex flex-col">
               {/* Top-left logo */}
               <div>
                 <Image
@@ -41,19 +42,48 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Image */}
-            <div className="relative">
-              <div className="relative w-full h-96 lg:h-[500px]">
+
+
+            <div className="absolute top-0 right-0 z-10 flex flex-col items-center">
+              {/* Guitar image in rounded container */}
+              <div
+                style={{
+                  width: "672px",
+                  height: "586px",
+                  borderRadius: "0px 0px 151px 360px",
+                  overflow: "hidden",
+                  position: "relative",
+                }}
+              >
                 <Image
-                  src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=500&fit=crop"
-                  alt="Guitars and amplifier setup"
+                  src="/images/homepageGuitar.jpg"
+                  alt="Guitar Hero Image"
                   fill
-                  className="object-cover rounded-lg"
+                  style={{
+                    objectFit: "cover",
+                    objectPosition: "center -400px",
+                  }}
+                  priority
                 />
-                {/* Orange accent circle */}
-                <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-orange-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">♪</span>
-                </div>
+              </div>
+
+              {/* Symbol image - separate from the container, just overlapping */}
+              <div
+                style={{
+                  marginTop: "-32px",
+                  marginRight: "-160px",
+                  zIndex: 20,
+                }}
+              >
+                <Image
+                  src="/images/symbol.png"
+                  alt="symbol"
+                  width={64}
+                  height={64}
+                  style={{
+                    objectFit: "contain",
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -233,67 +263,7 @@ export default function HomePage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-white py-16 border-t">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Logo and Contact */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Image
-                  src="/images/logo.png"
-                  alt="VibeStrings Logo"
-                  width={200}
-                  height={200}
-                />
-               </div>
-              <p className="text-gray-600">Enquiry@VibeStrings.com</p>
-              <p className="text-gray-600">San Francisco</p>
-            </div>
-
-            {/* Pages */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">PAGES</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li><Link href="/brands">Brands</Link></li>
-                <li><Link href="/about">About</Link></li>
-                <li><Link href="/collections">Collections</Link></li>
-                <li><Link href="/support">Support</Link></li>
-              </ul>
-            </div>
-
-            {/* Product */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">PRODUCT</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li><Link href="/terms">Terms</Link></li>
-                <li><Link href="/shipping">Shipping</Link></li>
-                <li><Link href="/privacy">Privacy Policy</Link></li>
-                <li><Link href="/copyright">Copyright</Link></li>
-              </ul>
-            </div>
-
-            {/* Follow Us */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">FOLLOW US</h3>
-              <div className="flex space-x-4">
-                <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
-                  <span className="text-xs">f</span>
-                </div>
-                <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
-                  <span className="text-xs">t</span>
-                </div>
-                <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
-                  <span className="text-xs">i</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t mt-12 pt-8 text-center text-gray-500">
-            <p>© 2024 Copyright VibeStrings</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
