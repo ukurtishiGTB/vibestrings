@@ -1,103 +1,264 @@
+'use client';
 import Image from "next/image";
+import Link from "next/link";
+import { useQuery } from "@apollo/client";
+import { GET_ALL_BRANDS } from "@/graphql/queries";
+import Footer from "@/components/footer";
+import { useLanguage, renderWithOrange } from "@/context/language-context";
 
-export default function Home() {
+export default function HomePage() {
+  const { data, loading, error } = useQuery(GET_ALL_BRANDS);
+  const { t } = useLanguage();
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center">{t('loading')}</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">{t('error')}: {error.message}</div>;
+
+  const brands = data?.findAllBrands || [];
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-white">
+      
+      <div className="relative">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            <div className="min-h-screen pt-8 flex flex-col">
+              
+              <div className="absolute top-8 left-8 space-y-4 z-20">
+                <div className="ml-8 py-10">
+                  <Image
+                    src="/images/logo.png"
+                    width={150}
+                    height={50}
+                    alt="VibeStrings"
+                  />
+                </div>
+              </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+              
+              <div className="flex-1 flex flex-col justify-center items-center text-center space-y-30">
+                <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                  {renderWithOrange(t('home.hero.title'))}
+                </h1>
+                <p className="text-lg text-gray-600 max-w-md -mt-24">
+                  {t('home.hero.subtitle')}
+                </p>
+              </div>
+            </div>
+
+            <div className="absolute top-0 right-0 z-10 flex flex-col items-center">
+              
+              <div
+                style={{
+                  width: "672px",
+                  height: "586px",
+                  borderRadius: "0px 0px 151px 360px",
+                  overflow: "hidden",
+                  position: "relative",
+                }}
+              >
+                <Image
+                  src="/images/homepageGuitar.jpg"
+                  alt="Guitar Hero Image"
+                  fill
+                  style={{
+                    objectFit: "cover",
+                    objectPosition: "center -400px",
+                  }}
+                  priority
+                />
+              </div>
+
+              
+              <div
+                style={{
+                  marginTop: "-32px",
+                  marginRight: "-160px",
+                  zIndex: 20,
+                }}
+              >
+                <Image
+                  src="/images/symbol.png"
+                  alt="symbol"
+                  width={64}
+                  height={64}
+                  style={{
+                    objectFit: "contain",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+
+      
+      <div className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              {renderWithOrange(t('home.brands.title'))}
+            </h2>
+            <p className="text-lg text-gray-600">
+              {t('home.brands.subtitle')}
+            </p>
+          </div>
+
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 items-center">
+            {brands.map((brand: any) => (
+              <Link
+                key={brand.id}
+                href={`/brands/${brand.id}/models`}
+                className="flex items-center justify-center p-8 bg-white rounded-lg hover:shadow-lg transition-shadow duration-300 group"
+              >
+                {brand.image ? (
+                  <Image
+                    src={brand.image}
+                    alt={brand.name}
+                    width={120}
+                    height={60}
+                    className="object-contain opacity-60 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                ) : (
+                  <div className="w-32 h-16 flex items-center justify-center bg-gray-100 rounded">
+                    <span className="text-gray-500 font-semibold text-lg">{brand.name}</span>
+                  </div>
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+     
+      <div className="py-20 bg-black text-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl mb-4">
+              {renderWithOrange(t('home.why.title'), 'text-white')}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-4">{t('home.why.browsing.title')}</h3>
+              <p className="text-white-400">
+                {t('home.why.browsing.desc')}
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                  <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1V8a1 1 0 00-1-1h-3z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-4">{t('home.why.delivery.title')}</h3>
+              <p className="text-gray-400">
+                {t('home.why.delivery.desc')}
+              </p>
+            </div>
+
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-4">{t('home.why.payments.title')}</h3>
+              <p className="text-gray-400">
+                {t('home.why.payments.desc')}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            <div className="flex-1 flex flex-col justify-center items-center text-center space-y-6">
+              <h2 className="text-4xl lg:text-5xl text-gray-900 leading-tight">
+                {renderWithOrange(t('home.bottom.title'))}
+              </h2>
+
+              
+              <div className="flex space-x-4">
+                <Link href="#">
+                  <Image
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png"
+                    alt="Get it on Google Play"
+                    width={150}
+                    height={35}
+                    className="object-contain"
+                  />
+                </Link>
+
+                <Link href="#">
+                  <Image
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/2560px-Download_on_the_App_Store_Badge.svg.png"
+                    alt="Download on the App Store"
+                    width={150}
+                    height={35}
+                    className="object-contain"
+                  />
+                </Link>
+              </div>
+            </div>
+
+            
+            <div className="relative flex justify-center items-center py-16">
+              
+              <Image
+                src="/images/Ellipse 6.png"
+                alt=""
+                width={800}
+                height={800}
+                className="absolute z-0"
+              />
+
+              
+              <div className="flex items-start space-x-8 relative z-10">
+                
+                <div className="mt-0">
+                  <Image
+                    src="/images/feed.png"
+                    alt="VibeStrings app - Your Feed page"
+                    width={250}
+                    height={540}
+                    className="rounded-3xl shadow-2xl"
+                  />
+                </div>
+
+                
+                <div className="mt-12">
+                  <Image
+                    src="/images/guitar-detail.png"
+                    alt="VibeStrings app - Guitar detail page"
+                    width={250}
+                    height={540}
+                    className="rounded-3xl shadow-2xl"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <Footer />
     </div>
   );
 }

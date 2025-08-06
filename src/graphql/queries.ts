@@ -10,6 +10,19 @@ export const GET_ALL_BRANDS = gql`
            }
         }
 `;
+
+export const GET_BRAND_BY_ID = gql`
+    query GetBrandById($id: ID!) {
+        findUniqueBrand(id: $id) {
+            id
+            name
+            origin
+            image
+            categories
+        }
+    }
+`;
+
 export const FIND_BRAND_MODELS= gql`
     query FindBrandModels($id: ID!, $sortBy: sortBy!) {
         findBrandModels(id: $id, sortBy: $sortBy) {
