@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from 'next/font/google';
 import "./globals.css";
 import { ApolloWrapper } from "@/lib/apolloWraper";
 import { ReactNode } from "react";
+//import { LanguageProvider } from "@/context/language-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,10 +24,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@1,900,700,500,301,701,300,501,401,901,400&display=swap" rel="stylesheet" />
+        <link 
+          href="https://api.fontshare.com/v2/css?f[]=satoshi@1,900,700,500,301,701,300,501,401,901,400&display=swap" 
+          rel="stylesheet" 
+        />
       </head>
       <body style={{ fontFamily: 'Satoshi, sans-serif' }}>
-        <ApolloWrapper>{children}</ApolloWrapper>
+        <ApolloWrapper>
+          
+            {children}
+          
+        </ApolloWrapper>
       </body>
     </html>
   );

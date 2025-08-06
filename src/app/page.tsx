@@ -22,21 +22,24 @@ export default function HomePage() {
             {/* Left Content */}
             <div className="min-h-screen pt-8 flex flex-col">
               {/* Top-left logo */}
-              <div>
-                <Image
-                  src="/images/logo.png"
-                  width={150}
-                  height={50}
-                  alt="logo"
-                />
+              <div className="absolute top-8 left-8 space-y-4 z-20">
+                       
+                        <div className="ml-8 py-10">
+                          <Image
+                            src="/images/logo.png"
+                            width={150}
+                            height={50}
+                            alt="VibeStrings"
+                          />
+                        </div>
               </div>
 
               {/* Main content */}
-              <div className="flex-1 flex flex-col justify-center items-center text-center space-y-6">
+              <div className="flex-1 flex flex-col justify-center items-center text-center space-y-30">
                 <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
                   Browse top quality <span className="text-orange-500">Guitars</span> online
                 </h1>
-                <p className="text-lg text-gray-600 max-w-md">
+                <p className="text-lg text-gray-600 max-w-md -mt-24">
                   Explore 500+ latest collections of branded guitars online with VibeStrings.
                 </p>
               </div>
@@ -267,3 +270,4 @@ export default function HomePage() {
     </div>
   );
 }
+

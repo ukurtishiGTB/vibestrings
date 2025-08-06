@@ -201,18 +201,23 @@ export default function BrandModelsPage() {
             {/* Left Content */}
              <div className="pt-4 flex flex-col h-[586px]">
               {/* Top-left logo and back button */}
-              <div className="space-y-4">
-                <button onClick={() => router.back()} className="flex items-center text-gray-600 hover:text-gray-800 cursor-pointer">
-                  <ChevronLeft className="w-4 h-4 mr-1" />
-                  Back To Home
-                </button>
-                <Image
-                  src="/images/logo.png"
-                  width={150}
-                  height={50}
-                  alt="VibeStrings"
-                />
-              </div>
+              <div className="absolute top-8 left-8 space-y-4 z-20">
+                        <button 
+                          onClick={() => router.back()} 
+                          className="flex items-center text-gray-600 hover:text-gray-800 cursor-pointer"
+                        >
+                          <ChevronLeft className="w-4 h-4 mr-1" />
+                          Back To List
+                        </button>
+                        <div className="ml-8">
+                          <Image
+                            src="/images/logo.png"
+                            width={150}
+                            height={50}
+                            alt="VibeStrings"
+                          />
+                        </div>
+                      </div>
 
               {/* Main content */}
               <div className="flex-1 flex flex-col justify-center items-center text-center space-y-6">
@@ -429,3 +434,4 @@ export default function BrandModelsPage() {
     </div>
   )
 }
+
