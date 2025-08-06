@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import "./globals.css";
 import { ApolloWrapper } from "@/lib/apolloWraper";
 import { ReactNode } from "react";
+import { LanguageProvider } from "@/context/language-context";
 //import { LanguageProvider } from "@/context/language-context";
 
 const geistSans = Geist({
@@ -31,8 +32,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body style={{ fontFamily: 'Satoshi, sans-serif' }}>
         <ApolloWrapper>
-          
+          <LanguageProvider>
             {children}
+          </LanguageProvider>
           
         </ApolloWrapper>
       </body>

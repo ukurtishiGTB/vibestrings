@@ -4,51 +4,50 @@ import Link from "next/link";
 import { useQuery } from "@apollo/client";
 import { GET_ALL_BRANDS } from "@/graphql/queries";
 import Footer from "@/components/footer";
+import { useLanguage, renderWithOrange } from "@/context/language-context";
 
 export default function HomePage() {
   const { data, loading, error } = useQuery(GET_ALL_BRANDS);
+  const { t } = useLanguage();
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">Error: {error.message}</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center">{t('loading')}</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">{t('error')}: {error.message}</div>;
 
   const brands = data?.findAllBrands || [];
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
+      
       <div className="relative">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
+            
             <div className="min-h-screen pt-8 flex flex-col">
-              {/* Top-left logo */}
+              
               <div className="absolute top-8 left-8 space-y-4 z-20">
-                       
-                        <div className="ml-8 py-10">
-                          <Image
-                            src="/images/logo.png"
-                            width={150}
-                            height={50}
-                            alt="VibeStrings"
-                          />
-                        </div>
+                <div className="ml-8 py-10">
+                  <Image
+                    src="/images/logo.png"
+                    width={150}
+                    height={50}
+                    alt="VibeStrings"
+                  />
+                </div>
               </div>
 
-              {/* Main content */}
+              
               <div className="flex-1 flex flex-col justify-center items-center text-center space-y-30">
                 <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                  Browse top quality <span className="text-orange-500">Guitars</span> online
+                  {renderWithOrange(t('home.hero.title'))}
                 </h1>
                 <p className="text-lg text-gray-600 max-w-md -mt-24">
-                  Explore 500+ latest collections of branded guitars online with VibeStrings.
+                  {t('home.hero.subtitle')}
                 </p>
               </div>
             </div>
 
-
-
             <div className="absolute top-0 right-0 z-10 flex flex-col items-center">
-              {/* Guitar image in rounded container */}
+              
               <div
                 style={{
                   width: "672px",
@@ -70,7 +69,7 @@ export default function HomePage() {
                 />
               </div>
 
-              {/* Symbol image - separate from the container, just overlapping */}
+              
               <div
                 style={{
                   marginTop: "-32px",
@@ -93,19 +92,19 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Brands Section */}
+      
       <div className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Featuring the <span className="text-orange-500">Best Brands</span>
+              {renderWithOrange(t('home.brands.title'))}
             </h2>
             <p className="text-lg text-gray-600">
-              Select your preferred brand and explore our exquisite collection.
+              {t('home.brands.subtitle')}
             </p>
           </div>
 
-          {/* Brand Grid */}
+          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 items-center">
             {brands.map((brand: any) => (
               <Link
@@ -132,30 +131,29 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Why VibeStrings Section */}
+     
       <div className="py-20 bg-black text-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl mb-4">
-              Why try <span className="text-orange-500">VibeStrings</span>?
+              {renderWithOrange(t('home.why.title'), 'text-white')}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {/* Smooth Browsing */}
+            
             <div className="text-center">
               <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <svg className="w-8 h-8 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm0 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-4">SMOOTH BROWSING</h3>
-              <p className="text-gray-400">
-                Lorem ipsum Dolor sit amet consectetur adipisicing elit.
+              <h3 className="text-xl font-semibold mb-4">{t('home.why.browsing.title')}</h3>
+              <p className="text-white-400">
+                {t('home.why.browsing.desc')}
               </p>
             </div>
 
-            {/* Easy Delivery */}
             <div className="text-center">
               <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <svg className="w-8 h-8 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
@@ -163,41 +161,39 @@ export default function HomePage() {
                   <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1V8a1 1 0 00-1-1h-3z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-4">EASY DELIVERY</h3>
+              <h3 className="text-xl font-semibold mb-4">{t('home.why.delivery.title')}</h3>
               <p className="text-gray-400">
-                Lorem ipsum Dolor sit amet consectetur adipisicing elit.
+                {t('home.why.delivery.desc')}
               </p>
             </div>
 
-            {/* Swift Payments */}
+            
             <div className="text-center">
               <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <svg className="w-8 h-8 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-4">SWIFT PAYMENTS</h3>
+              <h3 className="text-xl font-semibold mb-4">{t('home.why.payments.title')}</h3>
               <p className="text-gray-400">
-                Lorem ipsum Dolor sit amet consectetur adipisicing elit.
+                {t('home.why.payments.desc')}
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Section */}
+      
       <div className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
+            
             <div className="flex-1 flex flex-col justify-center items-center text-center space-y-6">
               <h2 className="text-4xl lg:text-5xl text-gray-900 leading-tight">
-                Browse and buy your{" "}
-                <span className="text-orange-500">favorite guitars</span> with
-                VibeStrings.
+                {renderWithOrange(t('home.bottom.title'))}
               </h2>
 
-              {/* App Store Buttons */}
+              
               <div className="flex space-x-4">
                 <Link href="#">
                   <Image
@@ -206,7 +202,6 @@ export default function HomePage() {
                     width={150}
                     height={35}
                     className="object-contain"
-
                   />
                 </Link>
 
@@ -217,16 +212,14 @@ export default function HomePage() {
                     width={150}
                     height={35}
                     className="object-contain"
-
                   />
                 </Link>
-
               </div>
             </div>
 
-            {/* Right Image - Mobile App Mockup */}
+            
             <div className="relative flex justify-center items-center py-16">
-              {/* Orange ellipse image background */}
+              
               <Image
                 src="/images/Ellipse 6.png"
                 alt=""
@@ -235,9 +228,9 @@ export default function HomePage() {
                 className="absolute z-0"
               />
 
-              {/* Phone mockups container */}
+              
               <div className="flex items-start space-x-8 relative z-10">
-                {/* First Phone */}
+                
                 <div className="mt-0">
                   <Image
                     src="/images/feed.png"
@@ -248,7 +241,7 @@ export default function HomePage() {
                   />
                 </div>
 
-                {/* Second Phone */}
+                
                 <div className="mt-12">
                   <Image
                     src="/images/guitar-detail.png"
@@ -260,14 +253,12 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
 
-      {/* Footer */}
+      
       <Footer />
     </div>
   );
 }
-

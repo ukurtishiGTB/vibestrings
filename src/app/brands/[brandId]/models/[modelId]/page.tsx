@@ -7,22 +7,24 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { ChevronLeft } from 'lucide-react';
 import Footer from "@/components/footer";
+import { useLanguage } from "@/context/language-context";
 
 export default function ModelDetailsPage() {
   const { brandId, modelId } = useParams();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('specs');
   const [musiciansPage, setMusiciansPage] = useState(0);
+  const { t } = useLanguage();
 
   const { data, loading, error } = useQuery(FIND_UNIQUE_MODEL, {
     variables: { brandId, modelId }
   });
 
-  if (loading) return <p className="text-center mt-4">Loading...</p>;
-  if (error) return <p className="text-center mt-4 text-red-500">Error: {error.message}</p>;
+  if (loading) return <p className="text-center mt-4">{t('loading')}</p>;
+  if (error) return <p className="text-center mt-4 text-red-500">{t('error')}: {error.message}</p>;
 
   const model = data?.findUniqueModel;
-  if (!model) return <p className="text-center mt-4">Model not found</p>;
+  if (!model) return <p className="text-center mt-4">{t('model.not.found')}</p>;
 
   const musiciansPerPage = 2;
   const totalMusicians = model.musicians?.length || 0;
@@ -34,16 +36,16 @@ export default function ModelDetailsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
+      
       <div className="relative h-[586px] overflow-hidden">
-        {/* Top-left logo and back button */}
+       
         <div className="absolute top-8 left-8 space-y-4 z-20">
           <button 
             onClick={() => router.back()} 
             className="flex items-center text-gray-600 hover:text-gray-800 cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
-            Back To List
+            {t('model.back')}
           </button>
           <div className="ml-8">
             <Image
@@ -55,16 +57,16 @@ export default function ModelDetailsPage() {
           </div>
         </div>
 
-        {/* Left side - Guitar name centered */}
+        
         <div className="absolute left-0 top-0 w-1/2 h-full flex items-center justify-center">
-          <h1 className="text-6xl font-bold text-gray-900 leading-tight text-center max-w-md" style={{ transform: 'translateY(-40px)' }}>
+          <h1 className="font-bold text-gray-900 leading-tight text-center max-w-md" style={{ fontSize: '56px', transform: 'translateY(-40px)' }}>
             {model.name}
           </h1>
         </div>
 
-        {/* Right side - Orange gradient with guitar image */}
+        
         <div className="absolute top-0 right-0 z-10">
-          {/* Orange gradient container with guitar image */}
+          
           <div
             style={{
               width: "672px",
@@ -79,7 +81,7 @@ export default function ModelDetailsPage() {
               justifyContent: "center",
             }}
           >
-            {/* Guitar image */}
+            
             <Image
               src={model.image || "/placeholder.svg"}
               alt={model.name}
@@ -92,7 +94,7 @@ export default function ModelDetailsPage() {
             />
           </div>
 
-          {/* Symbol image */}
+          
           <div
             style={{
               position: "absolute",
@@ -116,9 +118,9 @@ export default function ModelDetailsPage() {
         </div>
       </div>
 
-      {/* Content Section */}
+     
       <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* Tabs */}
+        
         <div style={{
           display: 'flex',
           flexDirection: 'row',
@@ -130,7 +132,7 @@ export default function ModelDetailsPage() {
           left: 'calc(50% - 1440px/2)',
           marginBottom: '32px'
         }}>
-          {/* Specification Tab */}
+          
           <div style={{
             width: '711px',
             height: '69px',
@@ -141,7 +143,7 @@ export default function ModelDetailsPage() {
             cursor: 'pointer'
           }}
           onClick={() => setActiveTab('specs')}>
-            {/* Base */}
+            
             <div style={{
               position: 'absolute',
               left: '0%',
@@ -150,7 +152,7 @@ export default function ModelDetailsPage() {
               bottom: '2.44%',
               background: '#FFFFFF'
             }} />
-            {/* Line */}
+            
             <div style={{
               position: 'absolute',
               left: '0%',
@@ -159,7 +161,7 @@ export default function ModelDetailsPage() {
               bottom: '0%',
               background: activeTab === 'specs' ? '#FF8A5D' : '#EBECEF'
             }} />
-            {/* Text */}
+            
             <div style={{
               position: 'absolute',
               left: '39.57%',
@@ -174,11 +176,11 @@ export default function ModelDetailsPage() {
               textAlign: 'center',
               color: activeTab === 'specs' ? '#FF8A5D' : '#9292A3'
             }}>
-              Specification
+              {t('model.tabs.specs')}
             </div>
           </div>
 
-          {/* Who plays it Tab */}
+          
           <div style={{
             width: '667px',
             height: '69px',
@@ -189,7 +191,7 @@ export default function ModelDetailsPage() {
             cursor: 'pointer'
           }}
           onClick={() => setActiveTab('musicians')}>
-            {/* Base */}
+            
             <div style={{
               position: 'absolute',
               left: '0%',
@@ -198,7 +200,7 @@ export default function ModelDetailsPage() {
               bottom: '2.44%',
               background: '#FFFFFF'
             }} />
-            {/* Line */}
+            
             <div style={{
               position: 'absolute',
               left: '0%',
@@ -207,7 +209,7 @@ export default function ModelDetailsPage() {
               bottom: '0%',
               background: activeTab === 'musicians' ? '#FF8A5D' : '#EBECEF'
             }} />
-            {/* Text */}
+            
             <div style={{
               position: 'absolute',
               left: '39.38%',
@@ -222,27 +224,27 @@ export default function ModelDetailsPage() {
               textAlign: 'center',
               color: activeTab === 'musicians' ? '#FF8A5D' : '#9292A3'
             }}>
-              Who plays it?
+              {t('model.tabs.musicians')}
             </div>
           </div>
         </div>
             
-        {/* Tab Content */}
+        
         {activeTab === 'specs' && (
           <div className="max-w-4xl mx-auto font-light">
             <div className="bg-white">
               <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                {model.description || `The ${model.name} is a modern take on the classic guitar design, featuring a sleek body shape and a comfortable neck profile for easy playability. It is equipped with dual active pickups that deliver a powerful and versatile tone, perfect for any genre from rock to funk. The onboard EQ allows players to shape their sound with precision, while the high-quality hardware ensures reliability on stage. With its striking finish options and attention to detail, the ${model.name} is designed for both performance and style.`}
+                {model.description || t('model.specs.description', { modelName: model.name })}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ul className="space-y-0.2 text-lg text-gray-700 list-disc pl-6">
-                    <li>Body Wood: {model.specs?.bodyWood || "Alder"}</li>
-                    <li>Neck Wood: {model.specs?.neckWood || "Maple"}</li>
-                    <li>Fingerboard: {model.specs?.fingerboardWood || "Rosewood"}</li>
-                    <li>Pickups: {model.specs?.pickups || "Dual Active Pickups"}</li>
-                    <li>Tuners: {model.specs?.tuners || "Vintage-Style"}</li>
-                    <li>Scale Length: {model.specs?.scaleLength || "25.5 inches"}</li>
-                    <li>Bridge: {model.specs?.bridge || "6-Saddle Synchronized Tremolo"}</li>
+                <ul className="text-lg text-gray-700 list-disc pl-6 font-light">
+                    <li>{t('model.specs.body')}: {model.specs?.bodyWood || "Alder"}</li>
+                    <li>{t('model.specs.neck')}: {model.specs?.neckWood || "Maple"}</li>
+                    <li>{t('model.specs.fingerboard')}: {model.specs?.fingerboardWood || "Rosewood"}</li>
+                    <li>{t('model.specs.pickups')}: {model.specs?.pickups || "Dual Active Pickups"}</li>
+                    <li>{t('model.specs.tuners')}: {model.specs?.tuners || "Vintage-Style"}</li>
+                    <li>{t('model.specs.scale')}: {model.specs?.scaleLength || "25.5 inches"}</li>
+                    <li>{t('model.specs.bridge')}: {model.specs?.bridge || "6-Saddle Synchronized Tremolo"}</li>
                 </ul>
               </div>
             </div>
@@ -252,7 +254,7 @@ export default function ModelDetailsPage() {
         {activeTab === 'musicians' && (
           <div className="max-w-6xl mx-auto">
             {totalMusicians === 0 ? (
-              <p className="text-center text-gray-500">No musicians found for this guitar.</p>
+              <p className="text-center text-gray-500">{t('model.musicians.none')}</p>
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -277,7 +279,7 @@ export default function ModelDetailsPage() {
                       }}
                       className="mx-auto"
                     >
-                      {/* Musician Image */}
+                      
                       {musician.musicianImage ? (
                         <div style={{
                           width: '444px',
@@ -305,11 +307,11 @@ export default function ModelDetailsPage() {
                           alignSelf: 'stretch',
                           flexGrow: 0
                         }}>
-                          <span style={{ color: '#666666' }}>No Image</span>
+                          <span style={{ color: '#666666' }}>{t('model.musicians.noimage')}</span>
                         </div>
                       )}
 
-                      {/* Musician Name */}
+                      
                       <h3 style={{
                         width: '444px',
                         height: '32px',
@@ -332,7 +334,7 @@ export default function ModelDetailsPage() {
                   ))}
                 </div>
 
-                {/* Pagination Dots */}
+                
                 {totalPages > 1 && (
                   <div className="flex justify-center space-x-2 mt-8">
                     {Array.from({ length: totalPages }, (_, index) => (
@@ -357,5 +359,3 @@ export default function ModelDetailsPage() {
     </div>
   );
 }
-
-

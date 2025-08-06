@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation"
 import Image from "next/image"
 import { ChevronLeft, Search, Filter, ChevronDown } from "lucide-react"
 import Footer from "@/components/footer"
+import { useLanguage, renderWithOrange } from "@/context/language-context"
 
 interface Model {
   id: string
@@ -29,19 +30,20 @@ export default function BrandModelsPage() {
   const [displayedModels, setDisplayedModels] = useState<Model[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(false)
+  const [hasInitialized, setHasInitialized] = useState(false)
   const router = useRouter()
-  const initializedRef = useRef(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const { t } = useLanguage()
 
   const MODELS_PER_PAGE = 3
 
-  // Fetch brand details
+  
   const { data: brandData, loading: brandLoading } = useQuery(GET_BRAND_BY_ID, {
     variables: { id: brandId },
   })
 
-  // Fetch brand models
+
   const {
     data: modelsData,
     loading: modelsLoading,
@@ -52,7 +54,7 @@ export default function BrandModelsPage() {
 
   const isLoading = brandLoading || modelsLoading
 
-  // Memoize models to prevent recreation on every render
+ 
   const models = useMemo(() => {
     return modelsData?.findBrandModels || []
   }, [modelsData?.findBrandModels])
@@ -61,7 +63,7 @@ export default function BrandModelsPage() {
   const brandName = brand?.name || "Brand"
   const brandImage = brand?.image
 
-  // Filter models based on search and type
+  
   const filteredModels = useMemo(() => {
     return models.filter(
       (model: Model) =>
@@ -70,37 +72,37 @@ export default function BrandModelsPage() {
     )
   }, [models, search, typeFilter])
 
-  // Initialize displayed models when data first loads
+  
   useEffect(() => {
-    if (models.length > 0 && !initializedRef.current) {
-      const initialModels = filteredModels.slice(0, MODELS_PER_PAGE)
-      setDisplayedModels(initialModels)
-      setCurrentPage(1)
-      initializedRef.current = true
-    }
-  }, [models.length, filteredModels, MODELS_PER_PAGE])
-
-  // Handle filter changes
-  useEffect(() => {
-    if (initializedRef.current) {
-      const newModels = filteredModels.slice(0, MODELS_PER_PAGE)
-      setDisplayedModels(newModels)
-      setCurrentPage(1)
-    }
-  }, [search, typeFilter])
-
-  useEffect(() => {
-    // Reset all state when brandId changes
     setDisplayedModels([])
     setCurrentPage(1)
     setSearch("")
     setTypeFilter("")
-    initializedRef.current = false
+    setHasInitialized(false)
   }, [brandId])
 
-  // Update the loadMoreModels function
+  
+  useEffect(() => {
+    if (models.length > 0 && !hasInitialized) {
+      const initialModels = models.slice(0, MODELS_PER_PAGE)
+      setDisplayedModels(initialModels)
+      setCurrentPage(1)
+      setHasInitialized(true)
+    }
+  }, [models.length, hasInitialized, MODELS_PER_PAGE])
+
+  
+  useEffect(() => {
+    if (hasInitialized) {
+      const newModels = filteredModels.slice(0, MODELS_PER_PAGE)
+      setDisplayedModels(newModels)
+      setCurrentPage(1)
+    }
+  }, [search, typeFilter, filteredModels, hasInitialized, MODELS_PER_PAGE])
+
+  
   const loadMoreModels = useCallback(() => {
-    if (loading) return
+    if (loading || displayedModels.length >= filteredModels.length) return
 
     const startIndex = displayedModels.length
     const endIndex = startIndex + MODELS_PER_PAGE
@@ -108,10 +110,10 @@ export default function BrandModelsPage() {
 
     if (newModels.length > 0) {
       setLoading(true)
-      // Simulate loading delay
+      
       setTimeout(() => {
         setDisplayedModels((prev) => {
-          // Filter out any duplicates to prevent key conflicts
+          
           const existingIds = new Set(prev.map((model) => model.id))
           const uniqueNewModels = newModels.filter((model: Model) => !existingIds.has(model.id))
           return [...prev, ...uniqueNewModels]
@@ -121,7 +123,8 @@ export default function BrandModelsPage() {
       }, 600)
     }
   }, [displayedModels.length, filteredModels, loading, MODELS_PER_PAGE])
-  // Close dropdown when clicking outside
+
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -134,8 +137,9 @@ export default function BrandModelsPage() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
   const filterOptions = [
-    { value: "", label: "Filter by type" },
+    { value: "", label: t('brand.filter.type') },
     { value: "Bass", label: "Bass" },
     { value: "Acoustic", label: "Acoustic" },
     { value: "Electric", label: "Electric" }
@@ -146,34 +150,14 @@ export default function BrandModelsPage() {
     setIsDropdownOpen(false)
   }
 
-   useEffect(() => {
-    if (models.length > 0 && !initializedRef.current) {
-      const initialModels = models.slice(0, MODELS_PER_PAGE) // Use models instead of filteredModels
-      setDisplayedModels(initialModels)
-      setCurrentPage(1)
-      initializedRef.current = true
-    }
-  }, [models.length, MODELS_PER_PAGE]) // Remove filteredModels dependency
 
-  // Handle filter changes
-  useEffect(() => {
-    if (initializedRef.current) {
-      const newModels = filteredModels.slice(0, MODELS_PER_PAGE)
-      setDisplayedModels(newModels)
-      setCurrentPage(1)
-    }
-  }, [search, typeFilter, filteredModels]) // Add filteredModels back here
-
-  // Update the scroll event listener with better conditions
   useEffect(() => {
     const handleScroll = () => {
-      // Only trigger if we have displayed some models and there are more to load
-      if (displayedModels.length >= MODELS_PER_PAGE && displayedModels.length < filteredModels.length) {
+      if (displayedModels.length > 0 && displayedModels.length < filteredModels.length && !loading) {
         const scrollTop = document.documentElement.scrollTop
         const windowHeight = window.innerHeight
         const docHeight = document.documentElement.offsetHeight
         
-        // Only load more when user is within 800px of the bottom AND has scrolled at least 300px
         if (scrollTop > 300 && windowHeight + scrollTop >= docHeight - 800) {
           loadMoreModels()
         }
@@ -182,32 +166,32 @@ export default function BrandModelsPage() {
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [loadMoreModels, displayedModels.length, filteredModels.length, MODELS_PER_PAGE])
+  }, [loadMoreModels, displayedModels.length, filteredModels.length, loading])
 
   if (isLoading && displayedModels.length === 0) {
-    return <p className="text-center mt-4">Loading...</p>
+    return <p className="text-center mt-4">{t('loading')}</p>
   }
 
   if (error) {
-    return <p className="text-center mt-4 text-red-500">Error: {error.message}</p>
+    return <p className="text-center mt-4 text-red-500">{t('error')}: {error.message}</p>
   }
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
+      
       <div className="relative">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
+            
              <div className="pt-4 flex flex-col h-[586px]">
-              {/* Top-left logo and back button */}
+              
               <div className="absolute top-8 left-8 space-y-4 z-20">
                         <button 
                           onClick={() => router.back()} 
                           className="flex items-center text-gray-600 hover:text-gray-800 cursor-pointer"
                         >
                           <ChevronLeft className="w-4 h-4 mr-1" />
-                          Back To List
+                          {t('brand.back')}
                         </button>
                         <div className="ml-8">
                           <Image
@@ -219,22 +203,20 @@ export default function BrandModelsPage() {
                         </div>
                       </div>
 
-              {/* Main content */}
+              
               <div className="flex-1 flex flex-col justify-center items-center text-center space-y-6">
                 <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                  Play like a <span className="text-orange-500">Rockstar</span>
+                  {renderWithOrange(t('brand.hero.title'))}
                 </h1>
                 <p className="text-lg text-gray-600 max-w-md">
-                  With a legacy dating back to the 1950s, {brandName} blends expert craftsmanship with cutting-edge
-                  innovation to deliver guitars that inspire creativity and elevate your performance. Trusted by top
-                  artists worldwide, {brandName} guitars are built to play fast, sound bold, and stand out on any stage.
+                  {t('brand.hero.subtitle', { brandName })}
                 </p>
                 </div>
             </div>
 
-            {/* Right side - Orange gradient with brand logo */}
+            
             <div className="absolute top-0 right-0 z-10 flex flex-col items-center">
-              {/* Orange gradient container with brand logo */}
+              
               <div
                 style={{
                   width: "672px",
@@ -249,7 +231,7 @@ export default function BrandModelsPage() {
                   justifyContent: "center",
                 }}
               >
-                {/* Brand logo in background */}
+                
                 {brandImage ? (
                   <Image
                     src={brandImage}
@@ -266,7 +248,7 @@ export default function BrandModelsPage() {
                 )}
               </div>
 
-              {/* Symbol image - separate from the container, just overlapping */}
+              
               <div
                 style={{
                   marginTop: "-16px",
@@ -289,15 +271,15 @@ export default function BrandModelsPage() {
         </div>
       </div>
 
-      {/* Content Section */}
+      
       <div className="max-w-7xl mx-auto px-4 py-12">
         <h2 className="text-3xl font-bold text-center mb-8">
-          <span className="text-black">Check out the</span> <span className="text-orange-500">Selection</span>
+          {renderWithOrange(t('brand.selection.title'))}
         </h2>
 
-       {/* Filters */}
+      
         <div className="flex flex-col md:flex-row gap-4 mb-8 justify-center">
-          {/* Custom Dropdown */}
+          
           <div className="relative max-w-xs" ref={dropdownRef}>
             <div
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -309,7 +291,7 @@ export default function BrandModelsPage() {
               style={{width: '200px'}}
             >
               <span className={isDropdownOpen || typeFilter ? 'text-orange-500' : 'text-gray-400'}>
-                {typeFilter || "Filter by type"}
+                {typeFilter || t('brand.filter.type')}
               </span>
               <ChevronDown className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''} ${
                 isDropdownOpen || typeFilter ? 'text-orange-500' : 'text-gray-500'
@@ -319,10 +301,10 @@ export default function BrandModelsPage() {
               isDropdownOpen || typeFilter ? 'text-orange-500' : 'text-gray-400'
             }`} />
             
-            {/* Custom Dropdown Menu */}
+            
             {isDropdownOpen && (
               <div className="absolute top-full left-0 w-full mt-1 z-50">
-                {/* Dropdown Container */}
+                
                 <div
                   style={{
                     background: '#FFFFFF',
@@ -331,7 +313,7 @@ export default function BrandModelsPage() {
                   }}
                   className="w-full"
                 >
-                  {/* Dropdown Items */}
+                  
                   <div className="flex flex-col">
                     {filterOptions.map((option, index) => (
                       <div
@@ -362,14 +344,14 @@ export default function BrandModelsPage() {
             )}
           </div>
 
-         {/* Search Input */}
+         
           <div className="relative max-w-sm">
             <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${
               search ? 'text-orange-500' : 'text-gray-400'
             }`} />
             <input
               type="text"
-              placeholder="Search by name"
+              placeholder={t('brand.search.placeholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className={`pl-10 pr-4 py-3 rounded-md bg-white w-full transition-colors ${
@@ -381,7 +363,7 @@ export default function BrandModelsPage() {
           </div>
         </div>
 
-        {/* Guitar Grid */}
+        
          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {displayedModels.map((model: Model) => (
             <div
@@ -406,32 +388,31 @@ export default function BrandModelsPage() {
           ))}
         </div>
 
-        {/* Loading indicator */}
+        
         {loading && (
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-            <span className="ml-2 text-black">Loading more guitars...</span>
+            <span className="ml-2 text-black">{t('brand.loading')}</span>
           </div>
         )}
 
-        {/* Results info */}
+        
         <div className="flex justify-center items-center space-x-2 mb-8">
           <span className="text-black text-sm">
-            SHOWING {displayedModels.length} RESULTS FROM {filteredModels.length}
+            {t('brand.results', { displayed: displayedModels.length.toString(), total: filteredModels.length.toString() })}
           </span>
         </div>
 
-        {/* End of results message */}
+        
          {displayedModels.length >= filteredModels.length && filteredModels.length > 0 && (
           <div className="text-center py-8">
-            <p className="text-black">You've reached the end of the collection!</p>
+            <p className="text-black">{t('brand.end.message')}</p>
           </div>
         )}
       </div>
 
-      {/* Footer */}
+      
       <Footer />
     </div>
   )
 }
-
